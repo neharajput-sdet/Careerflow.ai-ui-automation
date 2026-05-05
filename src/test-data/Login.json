@@ -1,0 +1,5 @@
+{
+  "invalidCredentials": {
+    "invalidPasswordErrorMsg": "Incorrect password. Please try again or use \"Forgot Password\" to reset."
+  }
+}

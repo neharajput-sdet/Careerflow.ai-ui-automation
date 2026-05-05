@@ -1,0 +1,20 @@
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# Auth storage state (regenerated on every test run — contains live JWTs)
+auth/
+
+# Environment variables (contains test credentials)
+.env
+
+# Test reports
+reports/
+
+# Playwright MCP tool output (browser snapshots & console logs from MCP sessions)
+/.playwright-mcp/

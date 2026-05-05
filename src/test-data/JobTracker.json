@@ -1,0 +1,11 @@
+{
+  "statusChangeJob": {
+    "jobTitle": "Job Status Change"
+  },
+  "editJobDetails": {
+    "jobTitle": "Test Company Edit"
+  },
+  "dragAndDropJob": {
+    "jobTitle": "drag and drop job"
+  }
+}

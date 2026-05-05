@@ -1,18 +1,12 @@
-# CareerFlow AI — Test Cases
+# CareerFlow AI — Test Cases Automated
 
-> **Application:** https://app.careerflow.ai/
-> **Framework:** Playwright + TypeScript
-> **Test data:** `src/test-data/JobTracker.json` · `.env`
-
----
-
-## Table of Contents
+## Following test cases have been automated in this project:
 
 - [TS-01 Login](#ts-01-login)
 - [TS-02 Job Tracker — Page Navigation](#ts-02-job-tracker--page-navigation)
-- [TS-03 Job Tracker — Job Card Actions](#ts-03-job-tracker--job-card-actions)
+- [TS-03 Job Tracker — Verify Editing an Existing Job Card](#ts-03-job-tracker--verify-editing-an-existing-job-card)
 - [TS-04 Job Tracker — Status Change via Dropdown](#ts-04-job-tracker--status-change-via-dropdown)
-- [TS-05 Job Tracker — Drag & Drop](#ts-05-job-tracker--drag--drop)
+- [TS-05 Job Tracker — Status Change via Drag & Drop](#ts-05-job-tracker--drag--drop)
 - [Summary](#summary)
 
 ---
@@ -24,7 +18,7 @@
 
 ---
 
-### [TC-001 — Valid credentials redirect to dashboard](src/tests/login.spec.ts)
+### [TC-001 — Logging in with valid credentials redirects to dashboard](src/tests/login.spec.ts)
 
 | Field | Detail |
 |---|---|
@@ -42,7 +36,7 @@
 
 ---
 
-### [TC-002 — Valid email with invalid password shows error](src/tests/login.spec.ts)
+### [TC-002 — Logging in with valid email and invalid password shows error](src/tests/login.spec.ts)
 
 | Field | Detail |
 |---|---|
@@ -60,6 +54,24 @@
 
 ---
 
+### [TC-003 — Logging in with invalid email displays error message](src/tests/login.spec.ts)
+
+| Field | Detail |
+|---|---|
+| **ID** | TC-003 |
+| **Priority** | High |
+| **Type** | Negative / Functional |
+| **Preconditions** | No valid credentials required; random email + password generated via `DataGenerator.randomString` |
+
+| # | Action | Expected Result |
+|---|---|---|
+| 1 | Navigate to `/login` | URL contains `/login`; page title matches `/Login/` |
+| 2 | Enter a random 5-char string `@example.com` as email and a random 7-char password | Fields are populated |
+| 3 | Click **Login** | Login attempt is submitted |
+| 4 | Observe response | Error message is displayed; user remains on `/login` |
+
+---
+
 ## TS-02 Job Tracker — Page Navigation
 
 **Spec:** [`src/tests/jobTracker.spec.ts`](src/tests/jobTracker.spec.ts)
@@ -67,11 +79,11 @@
 
 ---
 
-### [TC-003 — Verify Job Tracker page elements](src/tests/jobTracker.spec.ts)
+### [TC-004 — Verify Job Tracker page elements](src/tests/jobTracker.spec.ts)
 
 | Field | Detail |
 |---|---|
-| **ID** | TC-003 |
+| **ID** | TC-004 |
 | **Priority** | High |
 | **Type** | Smoke / Functional |
 | **Preconditions** | `jobTrackerPage` fixture navigates to `/board` and waits for cards |
@@ -85,33 +97,49 @@
 
 ---
 
-## TS-03 Job Tracker — Job Card Actions
+## TS-03 Job Tracker — Verify Editing an Existing Job Card
 
 **Spec:** [`src/tests/jobTracker.spec.ts`](src/tests/jobTracker.spec.ts)
 **Page Object:** [`src/pages/JobTracker.ts`](src/pages/JobTracker.ts)
 
-**Shared setup:**
-- Existing card identified by `editJobDetails.jobTitle` = `"Test Company Edit"` in `JobTracker.json`
-- `afterEach` restores the card's title to `"Test Company Edit"` after every test
+**Pre-conditions:**
+- User is logged in and on the Job Tracker board (`/board`)
+- A job card titled **"Test Company Edit"** exists on the board in any column
+- After the test, the card title is restored to **"Test Company Edit"** (cleanup step)
 
 ---
 
-### [TC-004 — Edit job card details and verify changes are saved](src/tests/jobTracker.spec.ts)
+### [TC-005 — Edit all details of an existing job card and verify changes are saved and displayed correctly](src/tests/jobTracker.spec.ts)
 
 | Field | Detail |
 |---|---|
-| **ID** | TC-004 |
+| **ID** | TC-005 |
 | **Priority** | High |
 | **Type** | Functional / CRUD |
-| **Test Data** | `newJobCardDetails` — all fields generated at runtime via `DataGenerator` (timestamp-unique title, company, salary, location, description, tags) |
+| **Test Data** | All field values are unique and generated at runtime: timestamp-based Job Title and Company Name, a valid Job Post URL, a random Salary (between 50,000 and 150,000), random Location text, a random Description (10–20 words), and 3 randomly generated Tags |
 
-| # | Action | Expected Result |
+| # | Step | Expected Result |
 |---|---|---|
-| 1 | Call `editJob("Test Company Edit", newJobCardDetails)` | Edit form opens; all provided fields filled; "Save Changes" clicked |
-| 2 | Close job details dialog | Dialog closes; board reloads |
-| 3 | Open job details for `newJobCardDetails.jobTitle` | Job Details dialog opens for the updated card |
-| 4 | Call `verifyJobDetails(newJobCardDetails)` | Title (`h3`), company (`span.truncate`), location, salary (`"Salary: <n>"`), description, and each tag chip match the generated data |
-| 5 | *afterEach* — `editJob(newJobCardDetails.jobTitle, { jobTitle: "Test Company Edit" })` | Card title restored to original |
+| 1 | On the board, locate the card titled **"Test Company Edit"** and click on it | The Job Details dialog opens showing the card's current information |
+| 2 | Click the **Edit** button inside the dialog | The dialog switches to edit mode; the following fields become editable: Job Title, Company Name, Job Post URL, Salary, Location, Description, and Tags |
+| 3 | Clear the **Job Title** field and enter a new unique job title | Job Title field reflects the new value |
+| 4 | Clear the **Company Name** field and enter a new company name | Company Name field reflects the new value |
+| 5 | Clear the **Job Post URL** field and enter a valid URL | Job Post URL field reflects the new value |
+| 6 | Clear the **Salary** field and enter a numeric salary value (e.g. 85000) | Salary field reflects the new value |
+| 7 | Clear the **Location** field and enter a location | Location field reflects the new value |
+| 8 | Clear the **Description** field and enter a description | Description field reflects the new value |
+| 9 | Remove all existing tags by clicking the **×** on each tag chip, then type 3 new tag names pressing **Enter** after each | All previous tags are removed; 3 new tag chips appear in the Tags field |
+| 10 | Click **Save Changes** | The dialog returns to view mode |
+| 11 | Close the Job Details dialog | The board reloads; the card is now visible under its new title |
+| 12 | Click on the renamed card to open Job Details | The Job Details dialog opens for the updated card |
+| 13 | Check the **Job Title** at the top of the dialog | Matches the title entered in step 3 |
+| 14 | Check the **Company Name** | Matches the value entered in step 4 |
+| 15 | Check the **Location** | Matches the value entered in step 7 |
+| 16 | Check the **Salary** | Displayed as `"Salary: <value>"` and matches the value entered in step 6 |
+| 17 | Check the **Description** | Matches the text entered in step 8 |
+| 18 | Check the **Tags** section | All 3 tags are displayed as individual chips and match what was entered in step 9 |
+
+**Post-condition / Cleanup:** The card's title is edited back to **"Test Company Edit"** to restore the board to a known state for subsequent runs.
 
 ---
 
@@ -285,8 +313,9 @@
 |---|---|---|---|---|
 | TC-001 | Valid credentials redirect to dashboard | login.spec.ts | Critical | Active |
 | TC-002 | Valid email + invalid password shows error | login.spec.ts | High | Active |
-| TC-003 | Verify Job Tracker page elements | jobTracker.spec.ts | High | Active |
-| TC-004 | Edit job card details and verify changes | jobTracker.spec.ts | High | Active |
+| TC-003 | Invalid email displays error message | login.spec.ts | High | Active |
+| TC-004 | Verify Job Tracker page elements | jobTracker.spec.ts | High | Active |
+| TC-005 | Edit job card details and verify changes | jobTracker.spec.ts | High | Active |
 | TC-041 | Change status to "Saved" via dropdown | jobTracker.spec.ts | High | Active (serial) |
 | TC-042 | Change status to "Applied" via dropdown | jobTracker.spec.ts | High | Active (serial) |
 | TC-043 | Change status to "Interviewing" via dropdown | jobTracker.spec.ts | High | Active (serial) |

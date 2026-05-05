@@ -1,3 +1,13 @@
+// Flow rationale:
+// Tests are split into three groups ordered by dependency risk.
+// 1. Page element verification runs standalone — it only reads the DOM and cannot break shared state.
+// 2. Edit job details runs in a describe block with an afterEach teardown that restores the original
+//    title after every test. This keeps the job card name predictable for the next group without
+//    relying on test ordering.
+// 3. Status and drag-and-drop tests are marked `serial` because they iterate over every column in
+//    sequence: each test moves the card from wherever it currently sits, so the previous test's
+//    end state is the next test's starting point. Running them in parallel would cause race
+//    conditions where two tests fight over the same card position.
 import { test, expect } from "../fixtures/test-fixtures";
 import { JobDetails, DEFAULT_COLUMNS } from "../pages/JobTracker";
 import { DataGenerator } from "../utils/dataGenerator";

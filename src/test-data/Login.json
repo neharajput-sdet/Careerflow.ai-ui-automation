@@ -1,5 +1,6 @@
 {
   "invalidCredentials": {
-    "invalidPasswordErrorMsg": "Incorrect password. Please try again or use \"Forgot Password\" to reset."
+    "invalidPasswordErrorMsg": "Incorrect password. Please try again or use \"Forgot Password\" to reset.",
+    "invalidEmailErrorMsg": "User not found! Please use the Sign Up option to create a new account."
   }
 }
